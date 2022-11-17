@@ -2,16 +2,22 @@ import { StatusBar } from 'expo-status-bar';
 import { Platform, StyleSheet } from 'react-native';
 
 import EditScreenInfo from '../components/EditScreenInfo';
-import { Text, View } from '../components/Themed';
+import { Text, View} from '../components/Themed';
+import {Button} from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function ModalScreen() {
+export default function ModalScreen({navigation}) {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Modal</Text>
+      <Text style={styles.title}>Account</Text>
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="/screens/ModalScreen.tsx" />
-
-      {/* Use a light status bar on iOS to account for the black space above the modal */}
+       <Text>Would you like to Sign out?</Text>
+       <Button onPress={ async (e) => { 
+        await AsyncStorage.removeItem("beforeme")
+        await AsyncStorage.removeItem("pageid")
+        await AsyncStorage.removeItem("c_user")
+        navigation.navigate("Auth")
+       }} title='Logout' accessibilityLabel="Learn more about this purple button" />
       <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
     </View>
   );

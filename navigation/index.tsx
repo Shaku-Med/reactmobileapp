@@ -12,12 +12,18 @@ import { ColorSchemeName, Pressable } from 'react-native';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
+import Auth from '../screens/Auth';
 import ModalScreen from '../screens/ModalScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
 import TabOneScreen from '../screens/TabOneScreen';
 import TabTwoScreen from '../screens/TabTwoScreen';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Signup from '../screens/Signup';
+import Reset from '../screens/Reset';
+import Chats from '../screens/Chats';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -35,13 +41,22 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
  */
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-function RootNavigator() {
+function RootNavigator({navigation}) {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator initialRouteName="Root">
+      <Stack.Group screenOptions={{presentation: 'fullScreenModal', headerShown: false}}>
+        <Stack.Screen name='Auth' component={Auth} options={{navigation}} />
+        {/*  */}
+        <Stack.Group screenOptions={{presentation: 'modal', headerShown: false }}>
+        <Stack.Screen name='Signup' component={Signup} options={{navigation}} />
+        </Stack.Group>
+        {/*  */}
+      </Stack.Group>
       <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
+      <Stack.Screen name="Chats" options={{ headerBlurEffect: "dark" }} component={Chats} />
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
-        <Stack.Screen name="Modal" component={ModalScreen} />
+        <Stack.Screen name="Modal" component={ModalScreen} options={{headerShown: false, navigation}} />
       </Stack.Group>
     </Stack.Navigator>
   );
@@ -66,8 +81,8 @@ function BottomTabNavigator() {
         name="TabOne"
         component={TabOneScreen}
         options={({ navigation }: RootTabScreenProps<'TabOne'>) => ({
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          navigation,
+          tabBarIcon: ({ color }) => <TabBarIcon name="comments" color={color} />,
           headerRight: () => (
             <Pressable
               onPress={() => navigation.navigate('Modal')}
@@ -88,8 +103,8 @@ function BottomTabNavigator() {
         name="TabTwo"
         component={TabTwoScreen}
         options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: 'Profile',
+          tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
         }}
       />
     </BottomTab.Navigator>
